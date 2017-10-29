@@ -5,8 +5,18 @@
 #include <unistd.h>
 //#include "rand_things.h"
 
+int * data = NULL;
+
 int main () {
-  printf("%d\n", rand_gen(8));
+  int f = open("/dev/random", O_RDWR);
+  data = (int*)malloc(1000);
+  int *origin = data;
+  read(f,data,1000);
+  close(f);
+  
+  printf("%d\n", rand_gen());
+  free(origin);
+  
   
   
   
@@ -14,10 +24,8 @@ int main () {
 }
 
 
-int rand_gen (int b) {
-  int f = open("/dev/random", O_RDWR);
-  int* toret;
-  read(f, toret, b);
-  close(f);
-  return *toret;
+int rand_gen () {
+  int ret = *data;
+  data++;
+  return ret;
 }
