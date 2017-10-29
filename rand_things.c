@@ -3,20 +3,39 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 //#include "rand_things.h"
 
-int * data = NULL;
 
 int main () {
+  umask(0);
   int f = open("/dev/random", O_RDWR);
-  data = (int*)malloc(1000);
-  int *origin = data;
-  read(f,data,1000);
+  int arr[10];
+  read(f,arr,sizeof(arr));
   close(f);
+  printf("Reading file...\n\n");
+
+  int i = 0;
+  for(i; i<10;i++){
+    printf("arr[%d]:  %d\n",i,arr[i]);
+  }
+
+
+  printf("\nWriting and reading new file...\n\n");
+  int new = open("arrayhere",O_CREAT | O_WRONLY, 0666);
+  write(new,arr,sizeof(arr));
+  close(new);
   
-  printf("%d\n", rand_gen());
-  free(origin);
-  
+  int arr2[10];
+  new = open("arrayhere",O_RDONLY);  
+  read(new,arr2,sizeof(arr2));
+  close(new);
+
+  i = 0;
+  for(i; i<10;i++){
+    printf("arr2[%d]:  %d\n",i,arr2[i]);
+    }
+
   
   
   
@@ -24,8 +43,3 @@ int main () {
 }
 
 
-int rand_gen () {
-  int ret = *data;
-  data++;
-  return ret;
-}
